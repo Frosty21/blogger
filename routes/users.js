@@ -93,3 +93,47 @@ router.get('/users/?', function(req, res) {
       res.json(users);
     });
 });
+
+// sign in page route 
+router.post('/users/signin', function(req, res) {
+  User
+    .findOne({
+      username: req.body.username
+    })
+    .select({
+      __v: 0,
+      updatedAt: 0,
+      createdAt: 0
+    }) //make sure to not return password (although it is hashed using bcrypt)
+    .exec(function(err, user) {
+      if (err)
+        throw err;
+
+      if (!user) {
+        return res.status(404).json({
+          error: true,
+          message: 'Username or Password is Wrong'
+        });
+      }
+
+
+      bcrypt.compare(req.body.password, user.password, function(err, valid) {
+        if (!valid) {
+          return res.status(404).json({
+            error: true,
+            message: 'Username or Password is Wrong'
+          });
+        }
+
+        // dont pass anything in the token that might be used in other parts of the app
+        var token = utils.generateToken(user);
+
+        user = utils.getCleanUser(user);
+
+        res.json({
+          user: user,
+          token: token
+        });
+      });
+    });
+});
