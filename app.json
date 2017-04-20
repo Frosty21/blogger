@@ -12,11 +12,11 @@
   	},
     "JWT_SECRET": {
       "description": "A secret string to generate JWT tokens (REQUIRED)",
-      "value":""
+      "value":"1234567890"
     },
     "FROM_EMAIL": {
       "description": "A *validated* from-email address to send emails from(REQUIRED)",
-      "value":""
+      "value":"test123@forward.cat"
     }
   },
   "addons": ["mongolab", "postmark:10k"]
