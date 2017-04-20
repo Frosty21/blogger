@@ -62,3 +62,34 @@ function isUserUnique(reqBody, cb) {
     cb(err);
   });
 }
+
+// check if user can access this route if admin
+router.get('/users/?', function(req, res) {
+
+  if (!req.user || !req.user.admin)
+    return res.status(401).json({
+      error: 'You must be admin to access this route.'
+    });
+
+  User
+    .find({})
+    .select({
+      password: 0,
+      __v: 0,
+      updatedAt: 0,
+      createdAt: 0
+    }) //do not return password (even though it's hashed using bcrypt)
+    .limit(100)
+    .sort({
+      createdAt: -1
+    })
+    .exec(function(err, users) {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          error: 'Could not retrieve users'
+        });
+      }
+      res.json(users);
+    });
+});
