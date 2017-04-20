@@ -183,3 +183,53 @@ router.post('/users/signup', function(req, res, next) {
 
   });
 });
+
+// check for no duplicates
+router.post('/users/validate/fields', function(req, res, next) {
+  var body = req.body;
+
+  isUserUnique(body, function(err) {
+    if (err) {
+      return res.status(403).json(err);
+    } else {
+      return res.json({});
+    }
+  });
+});
+
+//check token from current user
+router.get('/me/from/token', function(req, res, next) {
+
+// check for token in post/url params or header
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if (!token) {
+    return res.status(401).json({
+      message: 'Must pass token'
+    });
+  }
+
+  // decode and check token
+  jwt.verify(token, process.env.JWT_SECRET, function(err, user) {
+    if (err)
+      throw err;
+
+    //return user id from within the JSON token
+    User.findById({
+      '_id': user._id
+    }, function(err, user) {
+      if (err)
+        throw err;
+
+      //remove password and any userinfo
+      user = utils.getCleanUser(user); 
+      
+      // side note: token can be renewed from creating a new one via refresh but this is passing the old token back/
+
+      res.json({
+        user: user,
+        token: token
+      });
+
+    });
+  });
+});
