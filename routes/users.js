@@ -137,3 +137,49 @@ router.post('/users/signin', function(req, res) {
       });
     });
 });
+
+// sign up route
+router.post('/users/signup', function(req, res, next) {
+  var body = req.body;
+
+
+  var errors = utils.validateSignUpForm(body);
+  if (errors) {
+    return res.status(403).json(errors);
+  }
+
+  isUserUnique(body, function(err) {
+    if (err) {
+      return res.status(403).json(err);
+    }
+
+    var hash = bcrypt.hashSync(body.password.trim(), 10);
+    var user = new User({
+      name: body.name.trim(),
+      username: body.username.trim(),
+      email: body.email.trim(),
+      password: hash,
+      admin: false,
+      isEmailVerified: false
+    });
+
+
+    user.save(function(err, user) {
+      if (err)
+        throw err;
+
+      //sends welcome email w verification token
+      email.sendWelcomeEmail(user, req.headers.host); 
+
+      var token = utils.generateToken(user);
+
+      user = utils.getCleanUser(user);
+
+      res.json({
+        user: user,
+        token: token
+      });
+    });
+
+  });
+});
