@@ -29,14 +29,16 @@ const validateAndForgotPwd = (values, dispatch) => {
       }
 
       let {data, status} = result.payload.response;
-      //if status is not 200 or any one of the fields exist, then there is a field error
+
       if (response.payload.status != 200) {
-        //let other components know of error by updating the redux` state
+        // broadcast component error state to other components via updating the redux
         dispatch(forgotPwdFailure(data));
-        throw data; //throw error
+        //throw error
+        throw data;
       } else {
-        //let other components know that everything is fine by updating the redux` state
-        dispatch(forgotPwdSuccess(data)); //ps: this is same as dispatching RESET_USER_FIELDS
+        //let other components know status 200 state via updating the redux` state
+        dispatch(forgotPwdSuccess(data)); 
+        //similar to dispatching RESET_USER_FIELDS
       }
     });
 
@@ -48,8 +50,7 @@ class ForgotPwdForm extends Component {
   };
 
   componentWillMount() {
-    //Important! If your component is navigating based on some global state(from say componentWillReceiveProps)
-    //always reset that global state back to null when you REMOUNT
+    // need to reset the global state back to null if navigating on global state e.g. componentWillReceiveProps) before remount
     this.props.resetMe();
   }
 
@@ -83,6 +84,7 @@ class ForgotPwdForm extends Component {
 }
 
 export default reduxForm({
-  form: 'ForgotPwdForm', // a unique identifier for this form
+  form: 'ForgotPwdForm', 
+  // a unique identifier for this form
   validate, // <--- validation function given to redux-form
 })(ForgotPwdForm)
