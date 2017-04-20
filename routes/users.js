@@ -28,3 +28,37 @@ var userSchema = mongoose.Schema({
 userSchema.plugin(timestamps);
 
 var User = mongoose.model('User', userSchema);
+
+//user unique func
+function isUserUnique(reqBody, cb) {
+  var username = reqBody.username ? reqBody.username.trim() : '';
+  var email = reqBody.email ? reqBody.email.trim() : '';
+
+  User.findOne({
+    $or: [{
+      'username': new RegExp(["^", username, "$"].join(""), "i")
+    }, {
+      'email': new RegExp(["^", email, "$"].join(""), "i")
+    }]
+  }, function(err, user) {
+    if (err)
+      throw err;
+
+    if (!user) {
+      cb();
+      return;
+    }
+
+    var err;
+    if (user.username === username) {
+      err = {};
+      err.username = '"' + username + '" is not unique';
+    }
+    if (user.email === email) {
+      err = err ? err : {};
+      err.email = '"' + email + '" is not unique';
+    }
+
+    cb(err);
+  });
+}
