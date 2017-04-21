@@ -91,13 +91,6 @@ app.use(function(req, res, next) {
 });
 
 
-// app.use(function(err, req, res, next) {
-//   console.error(err.stack);
-//   console.log(1)
-//   res.status(500).send('Uh oh! Something broke!');
-// });
-
-
 // error handlers
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
