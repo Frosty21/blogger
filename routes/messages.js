@@ -11,7 +11,9 @@ var postSchema = mongoose.Schema({
   content: String,
   authorName: String,
   authorUsername: String,
-  authorId: String
+  authorId: String,
+  dateCreated: new Date()
+
 });
 
 postSchema.plugin(timestamps);
@@ -63,6 +65,8 @@ router.post('/messages', function(req, res, next) {
   var title = body.title;
   var categories = body.categories;
   var content = body.content;
+  // added date
+  var dateCreated = new Date();
 
   //simulate error if title, categories and content are all "test"
   //This is demo field-validation error upon submission. 
@@ -91,7 +95,8 @@ router.post('/messages', function(req, res, next) {
     authorName: req.user.name,
     authorUsername: req.user.username,
     authorId: req.user._id,
-    authorImage: req.user.image
+    authorImage: req.user.image,
+    dateCreated: dateCreated
   });
 
 
