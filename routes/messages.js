@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var timestamps = require('mongoose-timestamp');
 var expressJwt = require('express-jwt');
 
-// TODO add date 
+// need to set data  
 var postSchema = mongoose.Schema({
   title: String,
   categories: [String],
@@ -12,9 +12,57 @@ var postSchema = mongoose.Schema({
   authorName: String,
   authorUsername: String,
   authorId: String,
-  dateCreated: new Date()
+  dateCreated: Date,
+  dateUpdated: Date,
 
 });
+// need to check this this doesnt look correct or in the right folder should be spererate like in a knex seed file.
+
+db.Post.insert(
+{
+id: 1,
+title: "default",
+categories: "default",
+content: "Knock-knock",
+dateCreated: "2016-10-25T04:45:47.802339Z",
+dateUpdated: "2016-10-25T04:45:47.802339Z"
+},
+{
+id: 2,
+title: "default",
+categories: "default",
+content: "Who's there?",
+authorName: "String",
+authorUsername: "String",
+dateCreated: "2016-10-25T04:55:47.802339Z",
+dateUpdated: "2016-10-25T04:55:47.802339Z"
+},
+{
+id: 3,
+title: "default",
+categories: "default",
+text: "I asked the librarian for a book on Pavlov's dog and Schrödinger's cat. She said it rang a bell, but she wasn't sure if it was on the shelf or not.",
+dateCreated: "2016-10-23T01:55:47.802339Z",
+dateUpdated: "2016-10-25T04:55:47.802339Z"
+},
+{
+id: 4,
+title: "default",
+categories: "default",
+content: "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way – in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.",
+dateCreated: "2016-10-24T03:55:47.802339Z",
+dateUpdated: "2016-10-25T04:55:47.802339Z"
+},
+{
+id: 5,
+title: "default",
+categories: "default",
+content: "How many programmers does it take to change a light bulb?",
+dateCreated: "2016-10-25T05:10:51.483017Z",
+dateUpdated: "2016-10-25T04:55:47.802339Z"
+  }
+);
+
 
 postSchema.plugin(timestamps);
 
@@ -65,8 +113,9 @@ router.post('/messages', function(req, res, next) {
   var title = body.title;
   var categories = body.categories;
   var content = body.content;
-  // added date
-  var dateCreated = new Date();
+  
+  var dateCreated = isUndefined(dateCreated) ? null : dateCreated;
+  var dateUpdated = isUndefined(dateUpdated) ? null : dateUpdated;;
 
   //simulate error if title, categories and content are all "test"
   //This is demo field-validation error upon submission. 
@@ -87,27 +136,35 @@ router.post('/messages', function(req, res, next) {
     });
   }
 
-// TODO add date
   var post = new Post({
     title: title,
     categories: categories.split(','),
     content: content,
     authorName: req.user.name,
     authorUsername: req.user.username,
-    authorId: req.user._id,
-    authorImage: req.user.image,
-    dateCreated: dateCreated
+    dateCreated: new Date(),
+    dateUpdated: dateUpdated
   });
 
+    var postUpdate = new Post({
+    title: title,
+    categories: categories.split(','),
+    content: content,
+    authorName: req.user.name,
+    authorUsername: req.user.username,
+    dateCreated: dateCreated,
+    dateUpdated: new Date()
+  });
 
-  post.save(function(err, post) {
+// updated  from post to postUpdate in order to renew the dateUpdated timestamp
+  post.save(function(err, postUpdate) {
     if (err) {
       console.log(err);
       return res.status(500).json({
         message: 'Could not save post'
       });
     }
-    res.json(post);
+    res.json(postUpdate);
   });
 });
 
