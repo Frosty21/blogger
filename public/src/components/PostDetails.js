@@ -33,6 +33,7 @@ class PostDetails extends Component {
         <p>Message: {post.content}</p>
         <p>Username: {post.authorUsername}</p>
         <p>Date Created: {post.dateCreated}</p>
+        <p>Date Updated: {post.dateUpdated}</p>
       </div>
     );
   }
