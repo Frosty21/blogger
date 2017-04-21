@@ -23,6 +23,7 @@ class PostsList extends Component {
             <h3 className="list-group-item-heading">{post.title}</h3>
           </Link>
             {this.renderCategories(post.categories)}
+            <p>Date Created: {post.dateCreated}</p>
         </li>
       );
     });
