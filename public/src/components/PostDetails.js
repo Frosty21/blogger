@@ -30,7 +30,9 @@ class PostDetails extends Component {
       <div className="container">
         <h3>{post.title}</h3>
         <h6>Categories: {post.categories}</h6>
-        <p>{post.content}</p>
+        <p>Message: {post.content}</p>
+        <p>Username: {post.authorUsername}</p>
+        <p>Date Created: {post.dateCreated}</p>
       </div>
     );
   }
